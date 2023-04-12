@@ -15,7 +15,10 @@ class Tasks extends BaseController
 
     public function index()
     {
-        $data = $this->model->findAll();
+        $auth = service('auth');
+        $user = $auth->getCurrentUser();
+
+        $data = $this->model->getTasksByUserId($user->id);
 
         return view("Tasks/index", ['tasks' => $data]);
     }
@@ -38,6 +41,10 @@ class Tasks extends BaseController
     public function create()
     {
         $task = new Task($this->request->getPost());
+
+        $user = service('auth')->getCurrentUser();
+
+        $task->user_id = $user->id;
 
         if($this->model->insert($task)){
             return redirect()->to("/tasks/show/{$this->model->insertID}")
@@ -64,7 +71,10 @@ class Tasks extends BaseController
     {
         $task = $this->getTaskOr404($id);
 
-        $task->fill($this->request->getPost());
+        $post = $this->request->getPost();
+        unset($post['user_id']);
+
+        $task->fill($post);
 
         if(! $task->hasChanged()){
             return redirect()->back()
@@ -100,8 +110,11 @@ class Tasks extends BaseController
         ]);
     }
 
-    public function getTaskOr404($id){
-        $task = $this->model->find($id);
+    public function getTaskOr404($id)
+    {
+        $user = service('auth')->getCurrentUser();
+
+        $task = $this->model->getTaskByUserId($id, $user->id);
 
         if($task === null){
             throw new \CodeIgniter\Exceptions\PageNotFoundException("Task with id $id not found");
