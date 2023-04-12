@@ -6,16 +6,13 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 
-class LoginFilter implements FilterInterface
+class GuestFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        if( ! service('auth')->isLoggedIn()) {
-
-            session()->set('redirect_url', current_url());
-
-            return redirect()->to('/login')
-                ->with('warning', 'You must log in to access this content');
+        if( service('auth')->isLoggedIn())
+        {
+            return redirect()->to('/');
         }
     }
 
