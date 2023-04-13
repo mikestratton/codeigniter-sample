@@ -11,6 +11,9 @@
 <div>
     <label for="name">Password</label>
     <input type="password" name="password">
+    <?php if($user->id): ?>
+    <p>Leave password fields blank to keep existing password.</p>
+    <?php endif ?>
 </div>
 
 <div>
