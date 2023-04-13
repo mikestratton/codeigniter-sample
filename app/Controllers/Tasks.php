@@ -57,8 +57,6 @@ class Tasks extends BaseController
                 ->with('warning', 'Invalid data')
                 ->withInput();
         }
-
-
     }
 
     public function edit($id)
