@@ -8,19 +8,22 @@ class Tasks extends BaseController
 {
     private $model;
 
+    private $current_user;
+
     public function __construct()
     {
         $this->model = new \App\Models\TaskModel;
+        $this->current_user = service('auth')->getCurrentUser();
     }
 
     public function index()
     {
-        $auth = service('auth');
-        $user = $auth->getCurrentUser();
+        $data = $this->model->paginateTasksByUserId($this->current_user->id);
 
-        $data = $this->model->getTasksByUserId($user->id);
-
-        return view("Tasks/index", ['tasks' => $data]);
+        return view("Tasks/index", [
+            'tasks' => $data,
+            'pager' => $this->model->pager
+        ]);
     }
 
     public function show($id)
@@ -42,9 +45,7 @@ class Tasks extends BaseController
     {
         $task = new Task($this->request->getPost());
 
-        $user = service('auth')->getCurrentUser();
-
-        $task->user_id = $user->id;
+       $task->user_id = $this->current_user->id;
 
         if($this->model->insert($task)){
             return redirect()->to("/tasks/show/{$this->model->insertID}")
@@ -112,9 +113,7 @@ class Tasks extends BaseController
 
     public function getTaskOr404($id)
     {
-        $user = service('auth')->getCurrentUser();
-
-        $task = $this->model->getTaskByUserId($id, $user->id);
+         $task = $this->model->getTaskByUserId($id, $this->current_user->id);
 
         if($task === null){
             throw new \CodeIgniter\Exceptions\PageNotFoundException("Task with id $id not found");
