@@ -17,7 +17,7 @@ class Users extends \App\Controllers\BaseController
     public function index()
     {
         $users = $this->model->orderBy('id')
-                      ->paginate(5);
+                      ->paginate(12);
 
         return view('Admin/Users/index',[
             'users' => $users,
