@@ -43,6 +43,7 @@ class UserModel extends \CodeIgniter\Model
             $data['data']['password_hash'] = password_hash($data['data']['password'], PASSWORD_DEFAULT);
 
             unset($data['data']['password']);
+            unset($data['data']['password_confirmation']);
         }
 
         return $data;
