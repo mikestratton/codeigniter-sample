@@ -23,6 +23,7 @@ class Filters extends BaseConfig
         'secureheaders' => SecureHeaders::class,
         'login'         => \App\Filters\LoginFilter::class,
         'guest'         => \App\Filters\GuestFilter::class,
+        'admin'         => \App\Filters\AdminFilter::class,
     ];
 
     /**
@@ -63,6 +64,16 @@ class Filters extends BaseConfig
      * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
      */
     public array $filters = [
-        'login' => ['before' => ['tasks(/*)?']]
+        'login' => [
+            'before' => [
+                'tasks(/*)?',
+                'admin/*'
+            ]
+        ],
+        'admin' => [
+            'before' => [
+                'admin/*'
+            ]
+        ]
     ];
 }
